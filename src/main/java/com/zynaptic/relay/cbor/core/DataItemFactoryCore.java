@@ -36,7 +36,7 @@ import com.zynaptic.relay.cbor.DecodeStatus;
  *
  * @author Chris Holgate
  */
-public final class DataItemFactoryCore implements DataItemFactory {
+final class DataItemFactoryCore implements DataItemFactory {
 
   /*
    * Implements DataItemFactory.createInvalidItem(...)
