@@ -101,7 +101,7 @@ final class TextStringListDataItem extends DataItemCore<List<String>> {
   void appendJson(final PrintWriter printWriter, final int indent) {
     printWriter.print("\"");
     for (final String stringSegment : listData) {
-      JsonFormatter.writeJsonString(printWriter, stringSegment);
+      writeJsonString(printWriter, stringSegment);
     }
     printWriter.print("\"");
   }

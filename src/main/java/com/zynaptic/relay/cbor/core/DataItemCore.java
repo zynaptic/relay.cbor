@@ -163,7 +163,7 @@ abstract class DataItemCore<T> implements DataItem<T> {
    * @throws IOException This exception will be thrown on failure to write the
    *   primary data field.
    */
-  void writeExtensionPrimaryData(final ExtensionType extensionType, final DataOutputStream outputStream,
+  final void writeExtensionPrimaryData(final ExtensionType extensionType, final DataOutputStream outputStream,
       final int[] tags) throws IOException {
 
     // Prepend the data item with the specified tags (if present). These are
@@ -193,8 +193,8 @@ abstract class DataItemCore<T> implements DataItem<T> {
    * @throws IOException This exception will be thrown on failure to write the
    *   primary data field.
    */
-  void writeIndefinitePrimaryData(final MajorType majorType, final DataOutputStream outputStream, final int[] tags)
-      throws IOException {
+  final void writeIndefinitePrimaryData(final MajorType majorType, final DataOutputStream outputStream,
+      final int[] tags) throws IOException {
 
     // Prepend the data item with the specified tags (if present). These are
     // written in order, so the rightmost tag in the list binds most closely
@@ -225,7 +225,7 @@ abstract class DataItemCore<T> implements DataItem<T> {
    * @throws IOException This exception will be thrown on failure to write the
    *   primary data field.
    */
-  void writePrimaryData(final MajorType majorType, final long primaryData, final DataOutputStream outputStream,
+  final void writePrimaryData(final MajorType majorType, final long primaryData, final DataOutputStream outputStream,
       final int[] tags) throws IOException {
 
     // Prepend the data item with the specified tags (if present). These are
@@ -278,6 +278,54 @@ abstract class DataItemCore<T> implements DataItem<T> {
       final int initialByte = majorType.getByteEncoding(27);
       outputStream.writeByte(initialByte);
       outputStream.writeLong(primaryData);
+    }
+  }
+
+  /**
+   * Writes a string value out in JSON compatible format, converting control codes
+   * and unknown Unicode values to escaped string notation. Note that escaping the
+   * solidus character (/) is optional and is not implemented here to keep the
+   * encoding consistent with its use in base64 encoded strings.
+   *
+   * @param printWriter This is the output print writer to which the encoded
+   *   string will be appended.
+   */
+  final void writeJsonString(final PrintWriter printWriter, final String textString) {
+    for (final char nextChar : textString.toCharArray()) {
+      switch (nextChar) {
+      case '\"':
+        printWriter.append("\\\"");
+        break;
+      case '\\':
+        printWriter.append("\\\\");
+        break;
+      case '\b':
+        printWriter.append("\\b");
+        break;
+      case '\f':
+        printWriter.append("\\f");
+        break;
+      case '\n':
+        printWriter.append("\\n");
+        break;
+      case '\r':
+        printWriter.append("\\r");
+        break;
+      case '\t':
+        printWriter.append("\\t");
+        break;
+
+      // Explicitly encode unrecognised Unicode characters and those in the C0
+      // control set (0x0000 to 0x001F).
+      default:
+        if ((nextChar < 0x20) || (Character.isDefined(nextChar) == false)) {
+          printWriter.append("\\u");
+          printWriter.printf("%04X", 0xFFFF & nextChar);
+        } else {
+          printWriter.append(nextChar);
+        }
+        break;
+      }
     }
   }
 

@@ -79,7 +79,7 @@ final class TextStringDataItem extends DataItemCore<String> {
   @Override
   void appendJson(final PrintWriter printWriter, final int indent) {
     printWriter.print("\"");
-    JsonFormatter.writeJsonString(printWriter, textString);
+    writeJsonString(printWriter, textString);
     printWriter.print("\"");
   }
 }
