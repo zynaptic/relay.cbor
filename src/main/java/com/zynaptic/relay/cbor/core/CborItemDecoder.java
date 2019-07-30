@@ -74,7 +74,6 @@ final class CborItemDecoder {
     try {
       return recursiveDecode(inputStream.readUnsignedByte());
     } catch (final EOFException error) {
-      error.printStackTrace();
       return UndefinedDataItem.INVALID;
     }
   }
@@ -160,7 +159,6 @@ final class CborItemDecoder {
       dataItem = processExtensionTypes(initialByte, primaryData, tags);
       break;
     default:
-      System.out.println("Which major type?");
       dataItem = UndefinedDataItem.INVALID;
       break;
     }
@@ -313,8 +311,6 @@ final class CborItemDecoder {
       return UndefinedDataItem.UNSUPPORTED;
     }
 
-    System.out.println("Processing fixed length array.");
-
     // Iterate over the required number of data items, adding them to the data
     // item list. Note that we take into account the least strict decoding
     // criteria of all the data items.
@@ -341,8 +337,6 @@ final class CborItemDecoder {
     DecodeStatus decodeStatus = DecodeStatus.TRANSLATABLE;
     int initialByte;
 
-    System.out.println("Processing indefinite length array.");
-
     // Iterate over the indefinite number of data items, adding them to the data
     // item list. Note that we take into account the least strict decoding
     // criteria of all the data items.
@@ -353,7 +347,6 @@ final class CborItemDecoder {
       }
       final DataItem<?> nextDataItem = recursiveDecode(initialByte);
       decodeStatus = decodeStatus.getLeastStrictCriteria(nextDataItem.getDecodeStatus());
-      System.out.println("Init byte: " + initialByte + " Status: " + decodeStatus);
       if (decodeStatus.isFailure()) {
         return new UndefinedDataItem(decodeStatus);
       }
