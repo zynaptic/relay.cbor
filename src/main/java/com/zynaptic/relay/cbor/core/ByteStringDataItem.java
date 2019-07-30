@@ -75,7 +75,7 @@ final class ByteStringDataItem extends DataItemCore<byte[]> {
   @Override
   void appendJson(final PrintWriter printWriter, final int indent) {
     printWriter.print("\"");
-    JsonFormatter.writeBase64Url(printWriter, byteString);
+    Base64Encoding.writeBase64Url(printWriter, byteString);
     printWriter.print("\"");
   }
 }

@@ -136,7 +136,7 @@ public final class DataItemFactoryCore implements DataItemFactory {
   public DataItem<byte[]> createByteStringItem(final String encodedString, final int[] tags) {
     final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     try {
-      if (JsonFormatter.decodeBase64(outputStream, encodedString, false)) {
+      if (Base64Encoding.decodeBase64(outputStream, encodedString, false)) {
         return new ByteStringDataItem(outputStream.toByteArray(), tags);
       } else {
         return new ByteStringDataItem(null, tags).setDecodeStatus(DecodeStatus.INVALID);

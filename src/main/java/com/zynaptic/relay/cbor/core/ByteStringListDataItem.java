@@ -100,7 +100,7 @@ final class ByteStringListDataItem extends DataItemCore<List<byte[]>> {
   @Override
   void appendJson(final PrintWriter printWriter, final int indent) {
     printWriter.print("\"");
-    JsonFormatter.writeBase64Url(printWriter, listData);
+    Base64Encoding.writeBase64Url(printWriter, listData);
     printWriter.print("\"");
   }
 }
