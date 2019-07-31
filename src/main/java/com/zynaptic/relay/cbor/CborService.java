@@ -21,6 +21,9 @@
 
 package com.zynaptic.relay.cbor;
 
+import java.util.Map;
+import java.util.logging.Logger;
+
 /**
  * Provides an interface to the CBOR service factory, which may be used for
  * accessing the various JSON and CBOR service interfaces provided by the
@@ -50,14 +53,28 @@ public interface CborService {
   public DataStreamer getDataStreamer();
 
   /**
-   * Accesses the CBOR tokenizing schema service interface, which may be used for
-   * automatically tokenizing and expanding JSON and CBOR messages using formal
-   * schema definitions.
+   * Builds a new schema definition object, given a data item which encodes the
+   * toplevel schema definition as a named map. A standard Java logger component
+   * may be specified, which will be used to log warnings that are generated
+   * during data validation, tokenisation and expansion.
    *
-   * @return Returns a reference to the CBOR tokenizing schema service interface
-   *   to be used for processing JSON and CBOR messages using formal schema
-   *   definitions.
+   * @param schemaDataItem This is the CBOR data item which is to be used to build
+   *   the schema definition. Note that it must have a user type of
+   *   {@link UserDataType#NAMED_MAP}, which dictates the generic type definition
+   *   specified here. An unchecked cast may be used in order to convert a
+   *   wildcard data item to one with the required generic type, since runtime
+   *   checks will throw an {@link InvalidSchemaException} if the data item has
+   *   the incorrect user type.
+   * @param logger This is a standard Java logger which will be used to log
+   *   warning messages that are generated when a supplied data item fails to
+   *   validate against the schema definition. A null reference may be passed if
+   *   no logger is to be used.
+   * @return Returns a newly generated schema definition object which implements
+   *   the supplied schema definition.
+   * @throws InvalidSchemaException This exception will be thrown if the supplied
+   *   schema data item does not conform to the schema definition syntax.
    */
-  // TODO: public CborSchemaService getCborSchemaService();
+  public SchemaDefinition getSchemaDefinition(DataItem<Map<String, DataItem<?>>> schemaDataItem, Logger logger)
+      throws InvalidSchemaException;
 
 }
