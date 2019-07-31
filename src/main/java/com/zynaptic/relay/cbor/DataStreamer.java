@@ -28,8 +28,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 /**
- * Provides support for CBOR and JSON data formatting and decoding. Streaming
- * interfaces are used for formatted data inputs and outputs.
+ * Provides the public interface for supporting CBOR and JSON data formatting
+ * and decoding. Streaming interfaces are used for formatted data inputs and
+ * outputs.
  *
  * @author Chris Holgate
  */
