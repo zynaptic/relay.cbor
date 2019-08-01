@@ -21,9 +21,15 @@
 
 package com.zynaptic.relay.cbor.core;
 
+import java.util.Map;
+import java.util.logging.Logger;
+
 import com.zynaptic.relay.cbor.CborService;
+import com.zynaptic.relay.cbor.DataItem;
 import com.zynaptic.relay.cbor.DataItemFactory;
 import com.zynaptic.relay.cbor.DataStreamer;
+import com.zynaptic.relay.cbor.InvalidSchemaException;
+import com.zynaptic.relay.cbor.SchemaDefinition;
 
 /**
  * Provides the core implementation of the CBOR service interface, which may be
@@ -33,8 +39,18 @@ import com.zynaptic.relay.cbor.DataStreamer;
  */
 public final class CborServiceCore implements CborService {
 
-  private final DataItemFactory dataItemFactory = new DataItemFactoryCore();
-  private final DataStreamer dataStreamer = new DataStreamerCore();
+  private final DataItemFactory dataItemFactory;
+  private final DataStreamer dataStreamer;
+  private final SchemaBuilder schemaBuilder;
+
+  /**
+   * Provides public constructor for initialising the CBOR service components.
+   */
+  public CborServiceCore() {
+    dataItemFactory = new DataItemFactoryCore();
+    dataStreamer = new DataStreamerCore();
+    schemaBuilder = new SchemaBuilder(dataItemFactory);
+  }
 
   /*
    * Implements CborService.getDataItemFactory()
@@ -50,5 +66,14 @@ public final class CborServiceCore implements CborService {
   @Override
   public DataStreamer getDataStreamer() {
     return dataStreamer;
+  }
+
+  /*
+   * Implements CborService.getSchemaDefinition(...)
+   */
+  @Override
+  public SchemaDefinition getSchemaDefinition(final DataItem<Map<String, DataItem<?>>> schemaDataItem,
+      final Logger logger) throws InvalidSchemaException {
+    return schemaBuilder.build(schemaDataItem, logger);
   }
 }
