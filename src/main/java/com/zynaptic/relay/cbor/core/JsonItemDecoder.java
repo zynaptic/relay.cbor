@@ -129,8 +129,11 @@ final class JsonItemDecoder {
    * character. Then overwrites the current character with the result.
    */
   private void discardCurrentCharWhitespace() throws IOException {
-    while (Character.isWhitespace(currentChar)) {
-      currentChar = inputStream.read();
+    if (currentChar == '/') {
+      discardComment();
+    }
+    if (Character.isWhitespace(currentChar)) {
+      discardNextCharWhitespace();
     }
   }
 
@@ -141,7 +144,56 @@ final class JsonItemDecoder {
   private void discardNextCharWhitespace() throws IOException {
     do {
       currentChar = inputStream.read();
+      if (currentChar == '/') {
+        discardComment();
+      }
     } while (Character.isWhitespace(currentChar));
+  }
+
+  /*
+   * Performs common comment discarding, forcing an EOF condition if the comment
+   * is not valid.
+   */
+  private void discardComment() throws IOException {
+    currentChar = inputStream.read();
+    switch (currentChar) {
+    case '/':
+      discardSingleLineComment();
+      break;
+    case '*':
+      discardMultiLineComment();
+      break;
+    default:
+      currentChar = -1;
+      break;
+    }
+  }
+
+  /*
+   * Perform single line comment discarding. This discards all characters up to
+   * the end of the line.
+   */
+  private void discardSingleLineComment() throws IOException {
+    do {
+      currentChar = inputStream.read();
+    } while ((currentChar >= 0) && (currentChar != '\n'));
+  }
+
+  /*
+   * Perform multiple line comment discarding. This discards all characters up to
+   * the comment close token.
+   */
+  private void discardMultiLineComment() throws IOException {
+    int lastChar;
+    currentChar = inputStream.read();
+    do {
+      if (currentChar < 0) {
+        return;
+      }
+      lastChar = currentChar;
+      currentChar = inputStream.read();
+    } while (!((lastChar == '*') && (currentChar == '/')));
+    currentChar = inputStream.read();
   }
 
   /*
